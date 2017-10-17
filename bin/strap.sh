@@ -206,10 +206,12 @@ fi
 
 # add ssh key to github
 if ! [ -f "$HOME/.ssh/id_rsa" ]; then
+  logn "Generating ssh key"
   ssh-keygen -t rsa -b 4096 -C "$STRAP_GIT_EMAIL" -N "" -f "$HOME/.ssh/id_rsa"
   eval "$(ssh-agent -s)"
   ssh-add -K ~/.ssh/id_rsa
 
+  logn "Uploading ssh key to GitHub"
   PUBLIC_KEY="$(cat $HOME/.ssh/id_rsa.pub)"
   POST_BODY="{\"title\":\"MacOSX Key - strap\",\"key\":\"$PUBLIC_KEY\"}"
   curl $Q -H "Content-Type: application/json" -H "Authorization: token $STRAP_GITHUB_TOKEN" -X POST -d "$POST_BODY" https://api.github.com/user/keys
